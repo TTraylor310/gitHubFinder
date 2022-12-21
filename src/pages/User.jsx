@@ -4,16 +4,21 @@ import { useParams, Link } from 'react-router-dom'
 import Spinner from '../components/layout/Spinner'
 import GithubContext from '../context/github/GithubContext'
 import RepoList from '../components/users/RepoList'
+import { getUserAndRepos } from '../context/github/GithubActions'
 
 const User = () => {
-  const { getUser, user, loading, getUserRepos, repos } = useContext(GithubContext)
+  const { user, repos, dispatch } = useContext(GithubContext)
 
   const params = useParams()
 
   useEffect(() => {
-    getUser(params.login)
-    getUserRepos(params.login)
+    dispatch({type: 'SET_LOADING'})
+    const getUserData = async() => {
+      const userData = await getUserAndRepos(params.login)
+      dispatch({type: 'GET_USER_AND_REPOS', payload: userData})
+    }
 
+    getUserData()
   }, [])
 
   const {
@@ -33,13 +38,12 @@ const User = () => {
     hireable,
   } = user
 
-  if (loading) {
+  if (!user) {
     return <Spinner />
   }
 
   return (
     <>
-      {user.login}
       <div className='w-full mx-auto lg:w-10/12'>
         <div className='mb-4'>
           <Link to='/' className='btn btn-ghost'>
