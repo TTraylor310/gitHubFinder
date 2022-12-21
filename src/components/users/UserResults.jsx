@@ -13,7 +13,6 @@ const UserResults = () => {
         {users.map((user) => (
           <UserItem key={user.id} user={user}/>
         ))}
-        NEED users STATE info
       </div>
     )
   } else {
